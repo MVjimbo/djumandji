@@ -1,0 +1,5 @@
+.idea
+.flake8
+script_add_to_db.py
+data.py
+/static

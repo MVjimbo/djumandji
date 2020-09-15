@@ -15,7 +15,9 @@
           <a href="#"><img src="https://place-hold.it/130x80" width="130" height="80" alt=""></a>
           <div class="d-flex align-items-baseline align-content-baseline">
             <h1 class="h2 mt-4 font-weight-bold" >{{ vacancy.title }}</h1>
-            <p class="m-0 pl-3">{{ vacancy.salary_min }} – {{ vacancy.salary_max }} Р</p>
+            <p class="m-0 pl-3">
+                {% load humanize %}{{ vacancy.salary_min|intcomma }} – {{ vacancy.salary_max|intcomma }} Р
+            </p>
           </div>
           <p class="mt-2">{{ vacancy.specialty.title }}</p>
           <!--<p class="mt-2">Бэкенд • Средний (Middle) • PHP • PostgreSQL • MySQL • Node.js • Laravel • Symfony • Yii framework • Sails.js • Rabbitmq • Kafka</p>-->

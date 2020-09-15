@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 
 from app_catalog.views import MainView, VacancyListView, SpecialtyView, CompanyView, VacancyView, custom_404, custom_500
 
@@ -26,7 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', MainView.as_view(), name="main"),
     path('vacancies/', VacancyListView.as_view(), name="vacancy_list"),
-    path('vacancies/<int:pk>/', VacancyView.as_view(), name="vacancy"),
-    path('vacancies/cat/<str:category>/', SpecialtyView.as_view(), name="category"),
-    path('companies/<int:pk>/', CompanyView.as_view(), name="company")
+    re_path(r'^vacancies/(?P<pk>\d+)/$', VacancyView.as_view(), name="vacancy"),
+    re_path(r'^vacancies/cat/(?P<category>\w+)/$', SpecialtyView.as_view(), name="category"),
+    re_path(r'^companies/(?P<pk>\d+)/$', CompanyView.as_view(), name="company")
 ]

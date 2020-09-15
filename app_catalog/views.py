@@ -40,11 +40,17 @@ class SpecialtyView(ListView):
     template_name = "vacancies.html"
 
     def get_queryset(self):
-        specialty_id = self.kwargs.get("category")
-        vacancies = Vacancy.objects.filter(specialty__code=specialty_id)
+        specialty_code = self.kwargs.get("category")
+        vacancies = Vacancy.objects.filter(specialty__code=specialty_code)
         if not vacancies:
             raise Http404
         return vacancies
+
+    def get_context_data(self, **kwargs):
+        specialty_code = self.kwargs.get("category")
+        context = super().get_context_data(**kwargs)
+        context["count_vacancies"] = Vacancy.objects.filter(specialty__code=specialty_code).count()
+        return context
 
 
 class CompanyView(DetailView):

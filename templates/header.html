@@ -7,7 +7,7 @@
       <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
         <ul class="navbar-nav col-10">
           {% for part in parts_of_menu %}
-          <li class="nav-item">
+          <li class="nav-item {% if request.path == part.link %}active{% endif %}">
             <a class="nav-link" href="{{ part.link }}">{{ part.title }}</a>
           </li>
           {% endfor %}

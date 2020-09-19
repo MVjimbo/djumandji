@@ -134,8 +134,11 @@ class MyCompanyCreateView(CreateView):
     def post(self, request, *args, **kwargs):
         form = CompanyCreateForm(request.POST)
         if form.is_valid():
+            user = request.user
+            if Company.objects.filter(owner_id=user.id).exists():
+                return redirect(reverse('mycompany'))
             company = form.save(commit=False)
-            company.owner = self.request.user
+            company.owner = user
             company.save()
             return redirect(reverse('mycompany'))
         else:

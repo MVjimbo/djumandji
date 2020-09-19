@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -28,9 +29,10 @@ class Company(models.Model):
     # сотрудников(employee_count)
     name = models.CharField(max_length=32)
     location = models.CharField(max_length=32)
-    logo = models.URLField()
-    description = models.CharField(max_length=128)
-    employee_count = models.IntegerField()
+    logo = models.URLField(null=True)
+    description = models.TextField()
+    employee_count = models.CharField(max_length=20)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='company', default=None, null=True)
 
 
 class Vacancy(models.Model):

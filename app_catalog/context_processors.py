@@ -23,3 +23,10 @@ def menu(request):
         ]
     }
     return kwargs
+
+
+def navbar_username(request):
+    if request.user.is_authenticated:
+        username = request.user.username
+        return {'username': username}
+    return {'username': False}

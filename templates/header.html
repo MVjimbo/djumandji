@@ -13,9 +13,25 @@
           {% endfor %}
         </ul>
         <ul class="navbar-nav col-2 justify-content-end">
-          <li class="nav-item active">
-            <a href="#" class="nav-link font-weight-bold">Вход</a>
-          </li>
+            {% ifnotequal username False %}
+                <li class="nav-item active">
+                    <div class="btn-group">
+                      <button type="button" class="btn dropdown-toggle font-weight-bold" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ username }}
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-right mt-3">
+                        <a href="#" class="dropdown-item py-2">Профиль</a>
+                        <a href="#" class="dropdown-item py-2">Резюме</a>
+                        <a href="{% url 'mycompany' %}" class="dropdown-item py-2">Компания</a>
+                        <a href="#" class="dropdown-item py-2">Выйти</a>
+                      </div>
+                    </div>
+             </li>
+            {% else %}
+              <li class="nav-item active">
+                <a href="{% url 'login' %}" class="nav-link font-weight-bold">Вход</a>
+              </li>
+            {% endifnotequal %}
         </ul>
       </div>
     </nav>

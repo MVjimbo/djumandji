@@ -27,7 +27,7 @@ class SpecialtyAdmin(admin.ModelAdmin):
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ('name', 'location', 'employee_count', 'logo', 'description', 'owner')
-    readonly_fields = ('owner', 'name', 'location', 'description', 'employee_count')
+    readonly_fields = ('name', 'location', 'description', 'employee_count')
     inlines = (CompanyVacancyInline,)
 
 

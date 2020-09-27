@@ -45,10 +45,13 @@ urlpatterns = [
     path('vacancy/create/', VacancyCreate.as_view(), name='mycompany_vacancy_create'),
     path('application/create/', ApplicationCreateView.as_view(), name='application_create'),
     path('sent/', SentView.as_view(), name='sent')
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
 
 urlpatterns += [
     path('register/', MySignUpView.as_view(), name='signup'),
     path('login/', MyLogInView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout')
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+from djumandji.settings import MEDIA_COMPANY_IMAGE_DIR, MEDIA_SPECIALITY_IMAGE_DIR
+
 
 class Specialty(models.Model):
     # – Код(code)
@@ -22,10 +24,14 @@ class Specialty(models.Model):
 
     code = models.CharField(max_length=32)
     title = models.CharField(max_length=32, choices=SpecialtyChoices.choices)
-    picture = models.URLField()
+    picture = models.ImageField(upload_to=MEDIA_SPECIALITY_IMAGE_DIR, null=True)
 
     def __str__(self):
         return self.title
+
+    def delete(self, using=None, keep_parents=False):
+        self.picture.storage.delete(self.picture.path)
+        super().delete(using, keep_parents)
 
 
 class Company(models.Model):
@@ -42,10 +48,14 @@ class Company(models.Model):
     # сотрудников(employee_count)
     name = models.CharField(max_length=32)
     location = models.CharField(max_length=32)
-    logo = models.URLField(null=True)
+    logo = models.ImageField(upload_to=MEDIA_COMPANY_IMAGE_DIR, null=True)
     description = models.TextField()
     employee_count = models.CharField(max_length=20)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='company', default=None, null=True)
+
+    def delete(self, using=None, keep_parents=False):
+        self.logo.storage.delete(self.logo.path)
+        super().delete(using, keep_parents)
 
 
 class Vacancy(models.Model):

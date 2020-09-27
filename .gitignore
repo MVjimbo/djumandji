@@ -3,4 +3,5 @@
 script_add_to_db.py
 data.py
 /static
-old_migrations
+/app_catalog/old_migrations/
+/media

@@ -1,0 +1,82 @@
+{% extends 'mycompany/base_mycompany.html' %}
+{% block container %}
+{% include 'header.html' %}
+
+  <main class="container mt-3 pb-5">
+    <div class="row mt-5">
+      {% include "mycompany/aside.html" %}
+      <div class="col-12 col-lg-8">
+        <div class="card">
+          <div class="card-body px-4 pb-4">
+            <section class="tab-pane fade show active">
+              <div class="row">
+                  <div class="col-6">
+                    <h2 class="h4 pt-2 pb-3">Вакансии</h2>
+                  </div>
+                  <div class="col-6">
+                      <div class="d-flex flex-row-reverse">
+                        <a href="{% url 'mycompany_vacancy_create' %}" class="btn btn-primary">Добавить вакансию</a>
+                      </div>
+                  </div>
+              </div>
+              <!-- vacancy state 1 -->
+            {% if not vacancy_list %}
+            <div class="ml-2">
+                Нет вакансий
+            </div>
+            {% else %}
+              {% for vacancy in vacancy_list %}
+              <div class="card mt-3">
+                <div class="card-body px-4">
+                  <div class="row align-items-center">
+                    <div class="col-6 col-lg-8">
+                      <a href="{% url 'vacancy' vacancy.id%}" class="mb-1">{{ vacancy.title }}</a>
+                      <p class="mb-1">
+                        <span class="mr-4">
+                          {% load humanize %}{{ vacancy.salary_min|intcomma }}</span>
+                          <a href="#" class="text-info">
+                          {%  if vacancy.count_applications == 0 %}
+                            Нет откликов
+                          {% else %}
+                              {{ vacancy.count_applications }}
+                              {% load pluralize %}
+                              {{ vacancy.count_applications|rupluralize:"отклик,отклика,откликов" }}
+                          {% endif %}
+                      </a>
+                      </p>
+                    </div>
+                    <div class="col-6 col-lg-4 text-right">
+                      <a href="{% url 'mycompany_vacancy' vacancy.id %}" class="btn btn-outline-info">Изменить</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            {% endif %}
+              <!-- END vacancy state 1 -->
+              <!-- vacancy state 2 -->
+              <!--<div class="card mt-3">
+                <div class="card-body px-4">
+                  <div class="row align-items-center">
+                    <div class="col-6 col-lg-8">
+                      <a href="#" class="mb-1">Backend-разработчик</a>
+                      <p class="mb-1">
+                        <span class="mr-4">90  000</span><span class="text-muted">Нет откликов</span>
+                      </p>
+                    </div>
+                    <div class="col-6 col-lg-4 text-right">
+                      <a href="#" class="btn btn-outline-info">Изменить</a>
+                    </div>
+                  </div>
+                </div>
+              </div>-->
+              <!-- END vacancy state 2 -->
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+ {% include "scripts.html" %}
+{% endblock %}

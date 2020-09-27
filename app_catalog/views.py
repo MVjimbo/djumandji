@@ -6,10 +6,12 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from django.views.defaults import page_not_found, server_error
-from django.views.generic import DetailView, ListView, TemplateView, CreateView
+from django.views.generic import DetailView, ListView, TemplateView, CreateView, UpdateView, FormView
 
 from app_catalog.models import Vacancy, Company, Specialty
-from app_catalog.forms import ApplicationForm, CompanyCreateForm
+from app_catalog.forms import ApplicationForm, CompanyForm
+from app_catalog.views_add.views_mycompany import MyCompanyView, MyCompanyCreateView, MyCompanyUpdateView, \
+    MyCompanyVacancyListView, VacancyCreate, MyCompanyVacancyView, MyCompanyVacancyUpdateView
 
 
 def custom_404(request, exception):
@@ -76,20 +78,21 @@ class CompanyView(DetailView):
         return context
 
 
-class VacancyView(DetailView):
+class VacancyView(DetailView, FormView):
+    form_class = ApplicationForm
     model = Vacancy
     template_name = "vacancy.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        application_form = ApplicationForm(self.request)
-        context["application_form"] = application_form
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     application_form = ApplicationForm(self.request)
+    #     context["form"] = application_form
+    #     return context
 
 
 class MySignUpView(CreateView):
     form_class = UserCreationForm
-    template_name = 'user/signup.html'
+    template_name = 'user/register.html'
     success_url = '/'
     
     # def get(self, request, *args, **kwargs):
@@ -98,65 +101,28 @@ class MySignUpView(CreateView):
 
 
 class MyLogInView(LoginView):
-    template_name = "user/login.html"
+    template_name = "user/login1.html"
     redirect_authenticated_user = True
 
-    # def get_success_url(self):
-    #     url = self.request.META.get('HTTP_REFERER')
-    #     print(url)
-    #     return '/'
 
-
-class MyLogOutView(LogoutView):
-    pass
-
-
-class MyCompanyView(TemplateView):
-    # def get_template_names(self):#(self, request, *args, **kwargs):
-    #     user_id = self.request.user.id
-    #     if Company.objects.filter(owner_id=user_id) and \
-    #             self.request.META.get('HTTP_REFERER').find(reverse('mycompany')) != -1:
-    #         return 'mycompany/company-edit.html'
-    #     return 'mycompany/company-create.html'
-
-    def get(self, request, *args, **kwargs):
-        user_id = self.request.user.id
-        if not Company.objects.filter(owner_id=user_id).exists() and \
-                self.request.META.get('HTTP_REFERER').find(reverse('mycompany')) != -1:
-            return render(request, 'mycompany/company-edit.html', context={'form': CompanyCreateForm})
-        elif not Company.objects.filter(owner_id=user_id).exists():
-            return render(request, 'mycompany/company-create.html')
-        else:
-            return render(request, 'mycompany/company-edit.html', context={'form': CompanyCreateForm})
-
-
-class MyCompanyCreateView(CreateView):
+class ApplicationCreateView(CreateView):
     def post(self, request, *args, **kwargs):
-        form = CompanyCreateForm(request.POST)
+        form = ApplicationForm(request.POST)
+        vacancy_id = request.POST.get('vacancy_id')
+        try:
+            vacancy = Vacancy.objects.get(id=vacancy_id)
+        except Vacancy.DoesNotExist:
+            redirect(reverse(''))
         if form.is_valid():
             user = request.user
-            if Company.objects.filter(owner_id=user.id).exists():
-                return redirect(reverse('mycompany'))
-            company = form.save(commit=False)
-            company.owner = user
-            company.save()
-            return redirect(reverse('mycompany'))
+            application = form.save(commit=False)
+            application.vacancy = vacancy
+            application.user = user
+            application.save()
+            return redirect(reverse('sent'))
         else:
-            form.add_error('name', 'bruh')
-            return render(request, 'mycompany/company-edit.html', context={'form': form})
+            return redirect(reverse('vacancy', args=[vacancy_id]))
 
 
-    # def form_valid(self, form):
-        # company = form.save(commit=False)
-        # company.owner = self.request.user
-        # company.save()
-        # Company.objects.create(name=form.cleaned_data.get('name'),
-        #                        location=form.cleaned_data.get('location'),
-        #                        employee_count=form.cleaned_data.get('employee_count'),
-        #                        description=form.cleaned_data.get('description'),
-        #                        owner=self.request.user)
-        return reverse('mycompany')
-
-
-    # def post(self, request, *args, **kwargs):
-
+class SentView(TemplateView):
+    template_name = 'sent.html'

@@ -1,0 +1,66 @@
+{% extends 'mycompany/base_mycompany.html' %}
+{%  block container %}
+  {% include 'header.html' %}
+
+  <main class="container mt-3 pb-5">
+    <div class="row mt-5">
+      {% include 'mycompany/aside.html' %}
+      <div class="col-12 col-lg-8">
+        <div class="card">
+          <div class="card-body px-4 pb-4 tab-content">
+            <!-- Tab -->
+            <section>
+              <h2 class="h4 pt-2 pb-3">Создать вакансию</h2>
+              <form action="/vacancy/create/" method="post">
+                  {% csrf_token %}
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="vacancyTitle">Название вакансии</label>
+                        {{ form.title }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="userSpecialization">Специализация</label>
+                        {{ form.specialty }}
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="vacancySalaryMin">Зарплата от</label>
+                        {{ form.salary_min }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2" for="vacancySalaryMax">Зарплата до</label>
+                        {{ form.salary_max }}
+                        {{ form.salary_max.errors }}
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group pb-2">
+                  <label class="mb-2 text-dark" for="vacancySkills">Требуемые навыки</label>
+                  {{ form.skills }}
+                </div>
+                <div class="form-group pb-2">
+                  <label class="mb-2 text-dark" for="vacancyDescription">Описание вакансии</label>
+                    {{ form.description }}
+                </div>
+                <div class="form-group">
+                  <input type="submit" class="btn btn-info" value="Создать">
+                </div>
+              </form>
+              <!-- END Vacancy info -->
+                </section>
+            <!-- END Tab -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+ {% include 'scripts.html' %}
+{% endblock %}

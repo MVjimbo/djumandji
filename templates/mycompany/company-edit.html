@@ -1,19 +1,5 @@
-<!DOCTYPE html>
-<html lang="ru">
-
-<head>
-  <meta charset="UTF-8">
-  <title>Моя компания | Джуманджи</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <style>
-    body {
-      background-color: #F6F2E6;
-    }
-  </style>
-</head>
-
-<body>
+<{% extends 'mycompany/base_mycompany.html' %}
+{% block container %}
   {% include "header.html" %}
 
   <main class="container mt-3 pb-5">
@@ -28,7 +14,7 @@
               <p class="alert alert-info" role="alert">
                 Информация о компании обновлена
               </p>
-              <form method ='post' action="{% url 'mycompany_create' %}">
+              <form method ='post' action="{{ url }}">
                   {% csrf_token %}
                 <div class="row">
                   <div class="col-12 col-md-6">
@@ -36,6 +22,7 @@
                       <label class="mb-2 text-dark" for="companyName">Название компании</label>
                         {{ form.name }}
                         {{ form.name.errors }}
+                        {{ bruh }}
                     </div>
                   </div>
                   <!--<div class="col-12 col-md-6">
@@ -88,5 +75,4 @@
   </main>
 
 {% include "scripts.html" %}
-</body>
-</html>
+{% endblock %}

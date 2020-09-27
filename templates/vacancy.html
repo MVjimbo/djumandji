@@ -25,30 +25,28 @@
           <div style="line-height: 1.8;">
             {{ vacancy.description }}
           </div>
-            {% if request.user.is_authenticated %}
-                {%  load crispy_forms_tags %}
-                {% crispy application_form %}
-            {% endif %}
           <!--<form action="/echo" class="card mt-4 mb-3">
           </form>-->
-          <!--<form action="/echo" class="card mt-4 mb-3">
+          <form action="{% url 'application_create' %}" method="post" class="card mt-4 mb-3">
+              {% csrf_token %}
+              <input type="hidden" name="vacancy_id" id="vacancy_id" value="{{ vacancy.id }}">
             <div class="card-body mx-3">
               <p class="h5 mt-3 font-weight-normal">Отозваться на вакансию</p>
               <div class="form-group">
                 <label class="mb-1 mt-2" for="userName">Вас зовут</label>
-                <input class="form-control" type="text" placeholder="" id="userName">
+                  {{ form.written_username }}
               </div>
               <div class="form-group">
                 <label class="mb-1" for="userPhone">Ваш телефон</label>
-                <input class="form-control" type="tel" placeholder="" id="userPhone">
+                  {{ form.written_phone }}
               </div>
               <div class="form-group">
                 <label class="mb-1" for="userMsg" >Сопроводительное письмо</label>
-                <textarea class="form-control" rows="8" id="userMsg"></textarea>
+                  {{ form.written_cover_letter }}
               </div>
               <input type="submit" class="btn btn-primary mt-4 mb-2" value="Записаться на пробный урок">
             </div>
-          </form>-->
+          </form>
         </section>
       </div>
     </div>

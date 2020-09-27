@@ -3,4 +3,4 @@
 script_add_to_db.py
 data.py
 /static
-oldmigrations
+old_migrations

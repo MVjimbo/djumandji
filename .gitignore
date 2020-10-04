@@ -5,5 +5,4 @@ data.py
 /static
 /app_catalog/old_migrations/
 /media
-/djumandji/settings_dev.py
 db.sqlite3

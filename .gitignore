@@ -1,6 +1,5 @@
 .idea
 .flake8
-data.py
 /app_catalog/old_migrations/
 /media
 db.sqlite3

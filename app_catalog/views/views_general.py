@@ -24,7 +24,6 @@ class MainView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["company_list"] = Company.objects.annotate(count=Count("vacancies"))
         context["specialty_list"] = Specialty.objects.annotate(count=Count("vacancies")).filter(count__gt=0)
-        context['python'] = 'Python'
         return context
 
 

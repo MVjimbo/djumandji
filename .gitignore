@@ -5,5 +5,5 @@ data.py
 /static
 /app_catalog/old_migrations/
 /media
-/djumandji/settings_prod.py
-Procfile
+/djumandji/settings_dev.py
+db.sqlite3

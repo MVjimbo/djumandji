@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from django.urls import path, re_path
 
-from app_catalog.views.views_general import MainView, VacancyListView, SpecialtyView, CompanyView, VacancyView,\
+from app_catalog.views.views_general import MainView, VacancyListView, SpecialtyView, CompanyView, VacancyView, \
     custom_404, custom_500
 from app_catalog.views.views_resume import MyResumeView, MyResumeCreateView, MyresumeUpdateView
 from app_catalog.views.views_search import SearchView
@@ -31,7 +31,6 @@ from app_catalog.views.views_mycompany import MyCompanyVacancyUpdateView
 
 handler500 = custom_500
 handler404 = custom_404
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),

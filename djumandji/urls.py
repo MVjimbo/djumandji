@@ -1,13 +1,13 @@
 """djumandji URL Configuration
 
-The `urlpatterns` list routes URLs to views_add. For more information please see:
+The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
 Examples:
-Function views_add
-    1. Add an import:  from my_app import views_add
-    2. Add a URL to urlpatterns:  path('', views_add.home, name='home')
-Class-based views_add
-    1. Add an import:  from other_app.views_add import Home
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
     2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
@@ -19,10 +19,15 @@ from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from django.urls import path, re_path
 
-from app_catalog.views import MainView, VacancyListView, SpecialtyView, CompanyView, VacancyView, custom_404, \
-    custom_500, MySignUpView, MyLogInView, MyCompanyView, MyCompanyCreateView, MyCompanyUpdateView, \
-    MyCompanyVacancyListView, VacancyCreate, MyCompanyVacancyView, ApplicationCreateView, SentView
-from app_catalog.views_add.views_mycompany import MyCompanyVacancyUpdateView
+from app_catalog.views.views_general import MainView, VacancyListView, SpecialtyView, CompanyView, VacancyView,\
+    custom_404, custom_500
+from app_catalog.views.views_resume import MyResumeView, MyResumeCreateView, MyresumeUpdateView
+from app_catalog.views.views_search import SearchView
+from app_catalog.views.views_user import MySignUpView, MyLogInView
+from app_catalog.views.views_mycompany import MyCompanyView, MyCompanyCreateView, MyCompanyUpdateView, \
+    MyCompanyVacancyListView, VacancyCreate, MyCompanyVacancyView
+from app_catalog.views.views_application import ApplicationCreateView, SentView
+from app_catalog.views.views_mycompany import MyCompanyVacancyUpdateView
 
 handler500 = custom_500
 handler404 = custom_404
@@ -38,13 +43,17 @@ urlpatterns = [
     path('mycompany/', MyCompanyView.as_view(), name='mycompany'),
     path('mycompany/create/', MyCompanyCreateView.as_view(), name='mycompany_create'),
     path('mycompany/update/', MyCompanyUpdateView.as_view(), name='mycompany_update'),
-    path('mycompany/vacancies', MyCompanyVacancyListView.as_view(), name='mycompany_vacancy_list'),
+    path('mycompany/vacancies/', MyCompanyVacancyListView.as_view(), name='mycompany_vacancy_list'),
     re_path(r'^mycompany/vacancies/(?P<vacancy_id>\d+)/$', MyCompanyVacancyView.as_view(), name='mycompany_vacancy'),
     re_path(r'^mycompany/vacancies/(?P<vacancy_id>\d+)/update/$', MyCompanyVacancyUpdateView.as_view(),
             name='mycompany_vacancy_update'),
     path('vacancy/create/', VacancyCreate.as_view(), name='mycompany_vacancy_create'),
     path('application/create/', ApplicationCreateView.as_view(), name='application_create'),
-    path('sent/', SentView.as_view(), name='sent')
+    path('sent/', SentView.as_view(), name='sent'),
+    path('search/', SearchView.as_view(), name='search'),
+    path('myresume/', MyResumeView.as_view(), name='myresume'),
+    path('myresume/create/', MyResumeCreateView.as_view(), name='myresume_create'),
+    path('myresume/update/', MyresumeUpdateView.as_view(), name='myresume_update'),
 ]
 
 urlpatterns += [

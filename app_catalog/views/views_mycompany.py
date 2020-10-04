@@ -1,35 +1,35 @@
 import datetime
+from os import remove
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.views.generic import TemplateView, CreateView, FormView, ListView, UpdateView
+from django.views.generic import CreateView, FormView, ListView, UpdateView
 
 from app_catalog.forms import CompanyForm, VacancyForm
 from app_catalog.models import Company, Vacancy, Application
 
 
-class MyCompanyView(FormView):
-    # def get_template_names(self):#(self, request, *args, **kwargs):
-    #     user_id = self.request.user.id
-    #     if Company.objects.filter(owner_id=user_id) and \
-    #             self.request.META.get('HTTP_REFERER').find(reverse('mycompany')) != -1:
-    #         return 'mycompany/company-edit.html'
-    #     return 'mycompany/company-create.html'
+class MyCompanyView(LoginRequiredMixin, FormView):
+    login_url = '/login/'
 
     def get(self, request, *args, **kwargs):
         user_id = self.request.user.id
         if not Company.objects.filter(owner_id=user_id).exists() and \
                 self.request.META.get('HTTP_REFERER').find(reverse('mycompany')) != -1:
-            return  redirect(reverse('mycompany_create'))# render(request, 'mycompany/company-edit.html', context={'form': CompanyForm})
+            return redirect(reverse('mycompany_create'))
+            # render(request, 'mycompany/company-edit.html', context={'form': CompanyForm})
         elif not Company.objects.filter(owner_id=user_id).exists():
             return render(request, 'mycompany/company-create.html')
         else:
-            return redirect(reverse('mycompany_update'))# render(request, 'mycompany/company-edit.html', context={'form': CompanyForm})
+            return redirect(reverse('mycompany_update'))
+            # render(request, 'mycompany/company-edit.html', context={'form': CompanyForm})
 
 
-class MyCompanyCreateView(CreateView):
+class MyCompanyCreateView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
     model = Company
     form_class = CompanyForm
     template_name = 'mycompany/company-edit.html'
@@ -40,7 +40,7 @@ class MyCompanyCreateView(CreateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = CompanyForm(request.POST)
+        form = CompanyForm(request.POST, request.FILES)
         if form.is_valid():
             user = request.user
             if Company.objects.filter(owner_id=user.id).exists():
@@ -54,25 +54,19 @@ class MyCompanyCreateView(CreateView):
             return render(request, 'mycompany/company-edit.html', context={'form': form})
 
 
-    # def form_valid(self, form):
-        # company = form.save(commit=False)
-        # company.owner = self.request.user
-        # company.save()
-        # Company.objects.create(name=form.cleaned_data.get('name'),
-        #                        location=form.cleaned_data.get('location'),
-        #                        employee_count=form.cleaned_data.get('employee_count'),
-        #                        description=form.cleaned_data.get('description'),
-        #                        owner=self.request.user)
-        # return reverse('mycompany')
-
-
-class MyCompanyUpdateView(FormView):
+class MyCompanyUpdateView(LoginRequiredMixin, FormView):
+    login_url = '/login/'
     form_class = CompanyForm
     template_name = 'mycompany/company-edit.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['url'] = reverse('mycompany_update')
+        try:
+            company = Company.objects.get(owner_id=self.request.user.id)
+            context['image'] = company.logo.url
+        except:
+            pass
         return context
 
     def get_initial(self):
@@ -85,34 +79,41 @@ class MyCompanyUpdateView(FormView):
         return initial
 
     def post(self, request, *args, **kwargs):
-        form = CompanyForm(request.POST)
+        form = CompanyForm(request.POST, request.FILES)
         if form.is_valid():
             user = request.user
-            if not Company.objects.filter(owner_id=user.id).exists():
+            try:
+                company = Company.objects.get(owner_id=user.id)
+                company.name = form.cleaned_data.get('name')
+                company.location = form.cleaned_data.get('location')
+                company.description = form.cleaned_data.get('description')
+                company.employee_count = form.cleaned_data.get('employee_count')
+                if form.cleaned_data.get('logo'):
+                    # remove(company.logo.path)
+                    company.logo = form.cleaned_data.get('logo')
+                print(request.FILES)
+                company.save()
+            except:
                 return redirect(reverse('mycompany'))
-            Company.objects.filter(owner_id=user.id).update(
-                name=form.cleaned_data.get('name'),
-                location=form.cleaned_data.get('location'),
-                description=form.cleaned_data.get('description'),
-                employee_count=form.cleaned_data.get('employee_count')
-            )
             return redirect(reverse('mycompany'))
         else:
             form.add_error('name', 'bruh')
             return render(request, 'mycompany/company-edit.html', context={'form': form, 'bruh': 'bruh'})
 
 
-class MyCompanyVacancyListView(ListView):
+class MyCompanyVacancyListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
     model = Vacancy
     template_name = 'mycompany/vacancy-list.html'
 
     def get_queryset(self):
-        queryset = Vacancy.objects.filter(company__owner_id=self.request.user.id)\
+        queryset = Vacancy.objects.filter(company__owner_id=self.request.user.id) \
             .annotate(count_applications=Count('applications'))
         return queryset
 
 
-class VacancyCreate(FormView):
+class VacancyCreate(LoginRequiredMixin, FormView):
+    login_url = '/login/'
     form_class = VacancyForm
     template_name = 'mycompany/vacancy-create.html'
 
@@ -132,16 +133,11 @@ class VacancyCreate(FormView):
             return redirect(reverse('vacancy_create'))
 
 
-class MyCompanyVacancyView(FormView):
+class MyCompanyVacancyView(LoginRequiredMixin, FormView):
+    login_url = '/login/'
     model = Vacancy
     form_class = VacancyForm
     template_name = 'mycompany/vacancy-edit.html'
-    # 'title': Input(attrs={'class': 'form-control'}),
-    # 'salary_min': NumberInput(attrs={'class': 'form-control'}),
-    # 'salary_max': NumberInput(attrs={'class': 'form-control'}),
-    # 'specialty': Select(attrs={'class': 'form-control'}, choices=SpecialtyChoices),
-    # 'skills': Textarea(attrs={'class': 'form-control', 'rows': 3}),
-    # 'description': Textarea(attrs={'class': 'form-control', 'rows': 13})
 
     def get_initial(self):
         initial = super().get_initial()
@@ -167,7 +163,8 @@ class MyCompanyVacancyView(FormView):
         return context
 
 
-class MyCompanyVacancyUpdateView(UpdateView):
+class MyCompanyVacancyUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
     model = Vacancy
     form_class = VacancyForm
     pk_url_kwarg = 'vacancy_id'

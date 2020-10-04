@@ -1,11 +1,8 @@
-from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 from django import forms
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Fieldset
 from django.forms import Textarea, NumberInput, Select
 from django.forms.widgets import Input
 
-from app_catalog.models import Company, Application, Vacancy
+from app_catalog.models import Company, Application, Vacancy, Resume
 
 
 class ApplicationForm(forms.ModelForm):
@@ -27,7 +24,7 @@ class ApplicationForm(forms.ModelForm):
 class CompanyForm(forms.ModelForm):
     class Meta:
         model = Company
-        fields = ('name', 'location', 'description', 'employee_count')
+        fields = ('name', 'location', 'description', 'employee_count', 'logo')
         widgets = {
             'name': Input(attrs={'class': 'form-control'}),
             'location': Input(attrs={'class': 'form-control'}),
@@ -71,3 +68,27 @@ class VacancyForm(forms.ModelForm):
         # salary_min = models.IntegerField()
         # salary_max = models.IntegerField()
         # published_at = models.DateField()
+
+
+class ResumeForm(forms.ModelForm):
+    # name = models.CharField(max_length=100)
+    # surname = models.CharField(max_length=100)
+    # status = models.CharField(max_length=20, choices=StatusChoices.choices)
+    # salary = models.IntegerField()
+    # specialty = models.ForeignKey(Specialty, on_delete=models.SET_NULL, null=True, related_name='resumes')
+    # grade = models.CharField(max_length=30, choices=GradeChoices.choices)
+    # education = models.CharField(max_length=50)
+    # experience = models.TextField()
+    class Meta:
+        model = Resume
+        fields = ('name', 'surname', 'status', 'salary', 'specialty', 'grade', 'education', 'experience')
+        widgets = {
+            'name': Input(attrs={'class': 'form-control'}),
+            'surname': Input(attrs={'class': 'form-control'}),
+            'status': Select(attrs={'class': 'custom-select mr-sm-2'}),
+            'salary': NumberInput(attrs={'class': 'form-control'}),
+            'specialty': Select(attrs={'class': 'custom-select mr-sm-2'}),
+            'grade': Select(attrs={'class': 'custom-select mr-sm-2'}),
+            'education': Textarea(attrs={'class': 'form-control'}),
+            'experience': Textarea(attrs={'class': 'form-control'})
+        }

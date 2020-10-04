@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -34,6 +36,13 @@ class Specialty(models.Model):
         super().delete(using, keep_parents)
 
 
+def company_logo_path(instance, file):
+    filename, file_extension = os.path.splitext(file)
+    company_id = instance.id
+    new_filename = 'logo' + str(company_id) + file_extension
+    return os.path.join(MEDIA_COMPANY_IMAGE_DIR, new_filename)
+
+
 class Company(models.Model):
     # – Название(name)
     # – Город(location)
@@ -48,7 +57,7 @@ class Company(models.Model):
     # сотрудников(employee_count)
     name = models.CharField(max_length=32)
     location = models.CharField(max_length=32)
-    logo = models.ImageField(upload_to=MEDIA_COMPANY_IMAGE_DIR, null=True)
+    logo = models.ImageField(upload_to=company_logo_path, null=True)
     description = models.TextField()
     employee_count = models.CharField(max_length=20)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='company', default=None, null=True)
@@ -105,3 +114,44 @@ class Application(models.Model):
     written_cover_letter = models.TextField()
     vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, related_name='applications')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='applications')
+
+
+class Resume(models.Model):
+    # – Пользователь
+    # – Имя(name)
+    # – Фамилия(surname)
+    # – Готовность
+    # к
+    # работе(status) – Не
+    # ищу
+    # работу – Рассматриваю
+    # предложения – Ищу
+    # работу
+    # – Вознаграждение(salary)
+    # – Специализация(specialty)
+    # – Квалификация(grade)  – Стажер – Джуниор – Миддл – Синьор — Лид
+    # – Образование(education)
+    # – Опыт
+    # работы(experience)
+    # – Портфолио(portfolio)
+    class StatusChoices(models.TextChoices):
+        not_active = 1, 'Не ищу'
+        checking = 2, 'Рассматриваю'
+        active = 3, 'Ищу работу'
+
+    class GradeChoices(models.TextChoices):
+        intern = 1, 'Стажер'
+        junior = 2, 'Джуниор'
+        middle = 3, 'Миддл'
+        senior = 4, 'Синьор'
+        lead = 5, 'Лид'
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='resume')
+    name = models.CharField(max_length=100)
+    surname = models.CharField(max_length=100)
+    status = models.CharField(max_length=20, choices=StatusChoices.choices)
+    salary = models.IntegerField()
+    specialty = models.ForeignKey(Specialty, on_delete=models.SET_NULL, null=True, related_name='resumes')
+    grade = models.CharField(max_length=30, choices=GradeChoices.choices)
+    education = models.TextField()
+    experience = models.TextField()

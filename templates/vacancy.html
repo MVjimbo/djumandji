@@ -27,6 +27,7 @@
           </div>
           <!--<form action="/echo" class="card mt-4 mb-3">
           </form>-->
+            {% if request.user.is_authentificated %}
           <form action="{% url 'application_create' %}" method="post" class="card mt-4 mb-3">
               {% csrf_token %}
               <input type="hidden" name="vacancy_id" id="vacancy_id" value="{{ vacancy.id }}">
@@ -47,6 +48,7 @@
               <input type="submit" class="btn btn-primary mt-4 mb-2" value="Записаться на пробный урок">
             </div>
           </form>
+            {% endif %}
         </section>
       </div>
     </div>

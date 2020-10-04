@@ -6,3 +6,4 @@ data.py
 /app_catalog/old_migrations/
 /media
 /djumandji/settings_prod.py
+Procfile
